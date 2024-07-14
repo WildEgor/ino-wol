@@ -1,6 +1,5 @@
 // Internal libs
 #include <ESP8266WiFi.h>
-#include <ESP8266Ping.h>
 #include <WiFiClientSecure.h>
 #include <WiFiUDP.h>
 #include <Arduino.h>
@@ -20,6 +19,8 @@
 #include <ArduinoJson.h>
 // https://github.com/arkhipenko/TaskScheduler
 #include <TaskScheduler.h>
+// https://github.com/dancol90/ESP8266Ping
+#include <ESP8266Ping.h>
 
 WiFiUDP UDP;
 // computer_ip magic packet
@@ -36,8 +37,8 @@ void sendWOL();
 // Scheduler for async tasks
 Scheduler runner;
 void pingDevices();
-// tPingDevice ... 
-Task tPingDevice(500, TASK_FOREVER, &pingDevices); 
+// tPingDevice ...
+Task tPingDevice(500, TASK_FOREVER, &pingDevices);
 
 // setup ESP
 void setup() {
@@ -75,7 +76,7 @@ void setup() {
   // where the the initial interaction comes from Telegram as the requests will block the loop for
   // the length of the long poll
   bot.longPoll = 60;
-  
+
   UDP.begin(9);
 }
 
@@ -114,7 +115,7 @@ void handleNewMessages(int numNewMessages) {
       // The size of the main array is how many row options the keyboard has
       // The size of the sub arrays is how many coloums that row has
       // "The Text" property is what shows up in the keyboard
-      // The "callback_data" property is the text that gets sent when pressed  
+      // The "callback_data" property is the text that gets sent when pressed
       String keyboardJson = "[";
       for(int i = 0; i< numDevices; i++) {
         keyboardJson += "[{ \"text\" : \"" + devices[i].name + "\", \"callback_data\" : \"WOL" + String(i) + "\" }]";
@@ -133,7 +134,7 @@ void handleNewMessages(int numNewMessages) {
     if (type ==  F("callback_query") && text.startsWith("WOL")) {
       Sprint("callback button pressed with text: ");
       Sprintln(text);
-      
+
       text.replace("WOL", "");
       int index = text.toInt();
       WakeOnLan::sendWOL(computer_ip, UDP, devices[index].mac, sizeof devices[index].mac);
@@ -162,7 +163,7 @@ void pingDevices() {
     } else {
       Sprintln("ping failed");
     }
-    
+
     if (devices[index].rCounter <= 0) {
       devices[index].tCallbackQueryId = "";
       continue;

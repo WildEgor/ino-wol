@@ -4,7 +4,7 @@ ESP8266 wake-on-lan any LAN device via Telegram Bot!
 
 ## Usage
 
-- Specify bot token and network settings in `secrets.cpp`;
+- Create and edit bot token and network settings in `src/secrets.cpp`;
 ```cpp
 #include "secrets.h"
 
@@ -14,7 +14,7 @@ char ssid[] = ""; // your network SSID (name)
 char password[] = ""; // your network password
 ```
 
-- Specify devices in `devices.cpp`;
+- Create and edit devices in `src/devices.cpp`;
 ```cpp
 #include "devices.h"
 
@@ -31,5 +31,5 @@ TargetDevice devices[] ={
 };
 ```
 
-- Upload `main.cpp` to ESP8266 (using PlatformIO);
+- Upload `src/main.cpp` to ESP8266 (using PlatformIO);
 - [More details](https://google.com)

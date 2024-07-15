@@ -40,61 +40,6 @@ void pingDevices();
 // tPingDevice ...
 Task tPingDevice(500, TASK_FOREVER, &pingDevices);
 
-// setup ESP
-void setup() {
-  // Comment this if you want to disable serial printing
-  SERIAL_DEBUG;
-
-  // add async task
-  runner.addTask(tPingDevice);
-  tPingDevice.enable();
-
-  // Set WiFi to station mode and disconnect from an AP if it was Previously connected
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
-  delay(100);
-
-  // attempt to connect to Wifi network:
-  Sprint("connecting WI-FI: ");
-  Sprintln(ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    Sprint(".");
-    delay(500);
-  }
-
-  Sprint("\n");
-  Sprintln("WI-FI connected!");
-  Sprint("IP address: ");
-  Sprintln(WiFi.localIP());
-
-  // Required on 2.5 Beta or above.
-  wifiClient.setInsecure();
-
-  // longPoll keeps the request to Telegram open for the given amount of seconds if there are no messages
-  // This hugely improves response time of the bot, but is only really suitable for projects
-  // where the the initial interaction comes from Telegram as the requests will block the loop for
-  // the length of the long poll
-  bot.longPoll = 60;
-
-  UDP.begin(9);
-}
-
-// main loop
-void loop() {
-  runner.execute();
-
-  // getUpdates returns 1 if there is a new message from Telegram
-  if (millis() > tLastTimeMsgChecked + tDelayBetweenMsgChecks)  {
-    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
-    if (numNewMessages > 0) {
-      handleNewMessages(numNewMessages);
-    }
-
-    tLastTimeMsgChecked = millis();
-  }
-}
-
 // handleNewMessages telegram messages
 void handleNewMessages(int numNewMessages) {
   for (int i = 0; i < numNewMessages; i++) {
@@ -170,5 +115,60 @@ void pingDevices() {
     }
 
     devices[index].rCounter -= 1;
+  }
+}
+
+// setup ESP
+void setup() {
+  // Comment this if you want to disable serial printing
+  SERIAL_DEBUG;
+
+  // add async task
+  runner.addTask(tPingDevice);
+  tPingDevice.enable();
+
+  // Set WiFi to station mode and disconnect from an AP if it was Previously connected
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  delay(100);
+
+  // attempt to connect to Wifi network:
+  Sprint("connecting WI-FI: ");
+  Sprintln(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    Sprint(".");
+    delay(500);
+  }
+
+  Sprint("\n");
+  Sprintln("WI-FI connected!");
+  Sprint("IP address: ");
+  Sprintln(WiFi.localIP());
+
+  // Required on 2.5 Beta or above.
+  wifiClient.setInsecure();
+
+  // longPoll keeps the request to Telegram open for the given amount of seconds if there are no messages
+  // This hugely improves response time of the bot, but is only really suitable for projects
+  // where the the initial interaction comes from Telegram as the requests will block the loop for
+  // the length of the long poll
+  bot.longPoll = 60;
+
+  UDP.begin(9);
+}
+
+// main loop
+void loop() {
+  runner.execute();
+
+  // getUpdates returns 1 if there is a new message from Telegram
+  if (millis() > tLastTimeMsgChecked + tDelayBetweenMsgChecks)  {
+    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    if (numNewMessages > 0) {
+      handleNewMessages(numNewMessages);
+    }
+
+    tLastTimeMsgChecked = millis();
   }
 }

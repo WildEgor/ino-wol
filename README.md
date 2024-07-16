@@ -32,4 +32,4 @@ TargetDevice devices[] ={
 ```
 
 - Upload `src/main.cpp` to ESP8266 (using PlatformIO);
-- [More details](https://google.com)
+- [More details](https://wildegor.github.io/posts/WOL/)
